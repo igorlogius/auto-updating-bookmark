@@ -1,50 +1,47 @@
 
 const extId = 'trackmark';
+const postfix = '#' + extId;
+let marks = {};
 
-function onError(error) {
-	console.log(`${extId}::Error: ${error}`);
+function debug(msg) {
+	console.debug(`${extId}::Debug: ${msg}`);
 }
 
-let amarks = {};
 
 function onRemove(tabId, removeInfo) {
-	// remove tab from active tracking on close 
-	if (amarks[tabId]) {
-		delete amarks[tabId];
-		console.log("Stopped Tracking: " + tabId );
+	if (marks[tabId]) {
+		debug("Stopped Tracking: " + tabId );
+		delete marks[tabId];
 	}
 
 }
 
 async function onUpdate(tabId, changeInfo, tabInfo) {
-	//
-	console.log(extId, "-------------------");
-	if(changeInfo.url) {
 
-		// if url contains ?track=1 => save tabid
-		if( changeInfo.url.endsWith('?track=1') ) {
-			amarks[tabId] = changeInfo.url;
-			console.log("Started Tracking: " + tabId );
-		} else
-			// any navigation change on a saved tabid ... changes the bookmark 
-			if(amarks[tabId] !== changeInfo.url){
-				console.log("Tab: " + tabId + 
-					" URL changed from " + amarks[tabId] + 
-					" to " + changeInfo.url);
-				
-				console.log('// save new url into the previous bookmark');
-				const bmark = await browser.bookmarks.search({url: amarks[tabId]});
-				//console.log('bmark', bmark[0]);
-				console.log(changeInfo);
+	const tabUrl = tabInfo.url;
+	const tabTitle = tabInfo.title;
 
-				//console.log('tabInfo.title:', tabInfo);
-				browser.bookmarks.update(bmark[0].id, { title: tabInfo.title, url: changeInfo.url + "?track=1"});
-				amarks[tabId] = changeInfo.url + "?track=1";
-				
-				// feat: neuen bookmark anlegen, wenn keiner existiert
-			}
+	if(tabUrl.endsWith(postfix)){
+		debug("Started Tracking: " + tabId);
+		marks[tabId] = tabUrl.slice(0, -postfix.length);
+	}else
+	if( marks[tabId] && marks[tabId] !== tabUrl){
+		debug("Tab: " + tabId + " URL changed from " + marks[tabId] + " to " + tabUrl);
+
+		const bmark = await browser.bookmarks.search({url: marks[tabId]+postfix});
+		if(bmark.length > 0) {
+			browser.bookmarks.update(bmark[0].id, { title: "Tracked: " + tabTitle, url: tabUrl + postfix });
+			marks[tabId] = tabUrl;
+		}
 	}
 }
+
+browser.browserAction.onClicked.addListener((tab) => {
+  browser.bookmarks.create( { title: "Tracked:" + tab.title, url: tab.url + postfix});
+  browser.tabs.update(tab.id, {url: tab.url + postfix});
+});
+
+
 
 // add listeners
 browser.tabs.onUpdated.addListener(onUpdate); 
