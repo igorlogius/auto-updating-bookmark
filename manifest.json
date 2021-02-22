@@ -8,6 +8,9 @@
     "default_title": "create autotrack bookmark"
   },
   "description": "update bookmark on navigation",
+  "icons": {
+	  "250": "icon.png"
+  },
   "manifest_version": 2,
   "name": "trackmark",
   "permissions": [
@@ -15,5 +18,5 @@
     "tabs",
     "bookmarks"
   ],
-  "version": "0.2"
+  "version": "0.3"
 }
