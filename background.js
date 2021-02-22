@@ -1,34 +1,45 @@
 
 const extId = 'trackmark';
 const postfix = '#' + extId;
+
 let marks = {};
 
-function debug(msg) {
-	console.debug(`${extId}::Debug: ${msg}`);
+const debug = (msg) => {
+	console.debug(`${extId}::debug: ${msg}`);
 }
 
-
-function onRemove(tabId, removeInfo) {
+const onRemove = (tabId, removeInfo) => {
 	if (marks[tabId]) {
-		debug("Stopped Tracking: " + tabId );
+		debug(`stopped tracking for tabId: ${tabId}`);
 		delete marks[tabId];
 	}
-
 }
 
-async function onUpdate(tabId, changeInfo, tabInfo) {
+const onUpdate = async (tabId, changeInfo, tabInfo) => {
 
 	const tabUrl = tabInfo.url;
 	const tabTitle = tabInfo.title;
 
 	if(tabUrl.endsWith(postfix)){
-		debug("Started Tracking: " + tabId);
+		debug(`started tracking for tabId: ${tabId}`);
 		marks[tabId] = tabUrl.slice(0, -postfix.length);
-	}else
-	if( marks[tabId] && marks[tabId] !== tabUrl){
-		debug("Tab: " + tabId + " URL changed from " + marks[tabId] + " to " + tabUrl);
+		return;
+	}
 
-		const bmark = await browser.bookmarks.search({url: marks[tabId]+postfix});
+	if( marks[tabId] && marks[tabId] !== tabUrl ){
+
+		const n_url = new URL(tabUrl);
+		const p_url = new URL(marks[tabId]);
+
+		// check if we are on the same origin 
+		if( n_url.origin !== p_url.origin ) {
+			onRemove(tabId);
+			return;
+		}
+
+		debug(`tab: ${tabId} - url changed from ${marks[tabId]} to ${tabUrl}`);
+
+		const bmark = await browser.bookmarks.search({ url: marks[tabId] + postfix });
 		if(bmark.length > 0) {
 			browser.bookmarks.update(bmark[0].id, { title: "Tracked: " + tabTitle, url: tabUrl + postfix });
 			marks[tabId] = tabUrl;
@@ -36,14 +47,14 @@ async function onUpdate(tabId, changeInfo, tabInfo) {
 	}
 }
 
-browser.browserAction.onClicked.addListener((tab) => {
-  browser.bookmarks.create( { title: "Tracked:" + tab.title, url: tab.url + postfix});
-  browser.tabs.update(tab.id, {url: tab.url + postfix});
-});
-
+const onClicked = (tab) => {
+  browser.bookmarks.create({ title: "Tracked:" + tab.title, url: tab.url + postfix });
+  browser.tabs.update(tab.id, { url: tab.url + postfix });
+}
 
 
 // add listeners
+browser.browserAction.onClicked.addListener(onClicked);
 browser.tabs.onUpdated.addListener(onUpdate); 
 browser.tabs.onRemoved.addListener(onRemove); 
 
