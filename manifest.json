@@ -9,7 +9,7 @@
   },
   "description": "update bookmark on navigation",
   "icons": {
-	  "250": "icon.png"
+    "250": "icon.png"
   },
   "manifest_version": 2,
   "name": "trackmark",
