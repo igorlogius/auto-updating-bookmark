@@ -5,7 +5,7 @@
     ]
   },
   "browser_action": {
-    "default_title": "create autotrack bookmark"
+    "default_title": "create self updating bookmark (aka. trackmark)"
   },
   "description": "update bookmark on navigation",
   "icons": {
@@ -18,5 +18,5 @@
     "tabs",
     "bookmarks"
   ],
-  "version": "0.3"
+  "version": "0.3.1"
 }
