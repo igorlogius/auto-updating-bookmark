@@ -5,18 +5,18 @@
     ]
   },
   "browser_action": {
-    "default_title": "create self updating bookmark (aka. trackmark)"
+    "default_title": "create domain auto updating bookmark"
   },
-  "description": "update bookmark on navigation",
+  "description": "create a bookmark which updates itself to the last visited location on the same domain it was first created on",
   "icons": {
     "250": "icon.png"
   },
   "manifest_version": 2,
-  "name": "trackmark",
+  "name": "domain-auto-updating-bookmark",
   "permissions": [
     "activeTab",
     "tabs",
     "bookmarks"
   ],
-  "version": "0.3.1"
+  "version": "1.3.1"
 }

@@ -1,16 +1,16 @@
 
-const extId = 'trackmark';
-const postfix = '#' + extId;
-
+const postfix = '#autoupdate';
 let marks = {};
 
+/*
 const debug = (msg) => {
-	console.debug(`${extId}::debug: ${msg}`);
+	console.debug(`domain-auto-updating-bookmark::debug: ${msg}`);
 }
+*/
 
 const onRemove = (tabId, removeInfo) => {
 	if (marks[tabId]) {
-		debug(`stopped tracking for tabId: ${tabId}`);
+		//debug(`stopped tracking for tabId: ${tabId}`);
 		delete marks[tabId];
 	}
 }
@@ -21,7 +21,7 @@ const onUpdate = async (tabId, changeInfo, tabInfo) => {
 	const tabTitle = tabInfo.title;
 
 	if(tabUrl.endsWith(postfix)){
-		debug(`started tracking for tabId: ${tabId}`);
+		//debug(`started tracking for tabId: ${tabId}`);
 		marks[tabId] = tabUrl.slice(0, -postfix.length);
 		return;
 	}
@@ -37,21 +37,20 @@ const onUpdate = async (tabId, changeInfo, tabInfo) => {
 			return;
 		}
 
-		debug(`tab: ${tabId} - url changed from ${marks[tabId]} to ${tabUrl}`);
+		//debug(`tab: ${tabId} - url changed from ${marks[tabId]} to ${tabUrl}`);
 
 		const bmark = await browser.bookmarks.search({ url: marks[tabId] + postfix });
 		if(bmark.length > 0) {
-			browser.bookmarks.update(bmark[0].id, { title: "Tracked: " + tabTitle, url: tabUrl + postfix });
+			browser.bookmarks.update(bmark[0].id, { title: "auto: " + tabTitle, url: tabUrl + postfix });
 			marks[tabId] = tabUrl;
 		}
 	}
 }
 
 const onClicked = (tab) => {
-  browser.bookmarks.create({ title: "Tracked:" + tab.title, url: tab.url + postfix });
+  browser.bookmarks.create({ title: "auto:" + tab.title, url: tab.url + postfix });
   browser.tabs.update(tab.id, { url: tab.url + postfix });
 }
-
 
 // add listeners
 browser.browserAction.onClicked.addListener(onClicked);
