@@ -1,5 +1,5 @@
 
-const postfix = '#autoupdate';
+const postfix = '#trackmark';
 let marks = {};
 
 /*
