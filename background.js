@@ -72,7 +72,7 @@ async function onClicked (tab) {
 
 browser.menus.create({
 	id: extname,
-	title: 'Check to save DAU bookmarks here',
+	title: 'Check to save Auto Updating Bookmarks here',
 	type: "radio",
 	contexts: ["bookmark"],
 	visible: false,
