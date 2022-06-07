@@ -5,20 +5,19 @@
     ]
   },
   "browser_action": {
-    "default_title": "create domain auto updating bookmark"
+    "default_title": "create a auto updating bookmark"
   },
-  "description": "create a bookmark which updates itself to the last visited location on the same domain it was first created on",
+  "description": "create auto updating bookmarks in the same domain scope",
   "icons": {
     "250": "icon.png"
   },
   "manifest_version": 2,
-  "name": "domain-auto-updating-bookmark",
+  "name": "Auto Updating Bookmark",
   "permissions": [
-    "activeTab",
     "tabs",
     "bookmarks",
     "storage", 
     "menus"
   ],
-  "version": "1.4.0"
+  "version": "1.5.0"
 }

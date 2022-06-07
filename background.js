@@ -1,7 +1,13 @@
+/* global browser */
 
 //const temporary = browser.runtime.id.endsWith('@temporary-addon'); // debugging?
 const manifest = browser.runtime.getManifest();
 const extname = manifest.name;
+
+const filter = {
+    urls: ["<all_urls>"],
+    properties: ["url"]
+}
 
 const postfix = '#trackmark';
 let marks = {};
@@ -12,7 +18,7 @@ const debug = (msg) => {
 }
 */
 
-function onRemove (tabId, removeInfo) {
+function onRemove (tabId /*, removeInfo */) {
 	if (marks[tabId]) {
 		//console.debug(`stopped tracking for tabId: ${tabId}`);
 		delete marks[tabId];
@@ -71,7 +77,7 @@ browser.menus.create({
 	contexts: ["bookmark"],
 	visible: false,
 	checked: false,
-	onclick: async function(info, tab) {
+	onclick: async function(info/*, tab*/) {
 		if(info.bookmarkId ) {
 			//blub = { 'startup-tabs': info.bookmarkId }
 
@@ -86,7 +92,7 @@ browser.menus.create({
 	}
 });
 
-browser.menus.onShown.addListener(async function(info, tab) {
+browser.menus.onShown.addListener(async function(info/*, tab*/) {
 	if(info.bookmarkId ) {
 		const bmn = (await browser.bookmarks.get(info.bookmarkId))[0];
 		if(!bmn.url) {
@@ -100,10 +106,6 @@ browser.menus.onShown.addListener(async function(info, tab) {
 	browser.menus.refresh();
 });
 
-const filter = {
-    urls: ["<all_urls>"],
-    properties: ["url"]
-}
 
 
 // add listeners
