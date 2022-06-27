@@ -1,6 +1,5 @@
 /* global browser */
 
-//const temporary = browser.runtime.id.endsWith('@temporary-addon'); // debugging?
 const manifest = browser.runtime.getManifest();
 const extname = manifest.name;
 
@@ -11,12 +10,6 @@ const filter = {
 
 const postfix = '#trackmark';
 let marks = {};
-
-/*
-const debug = (msg) => {
-	console.debug(`domain-auto-updating-bookmark::debug: ${msg}`);
-}
-*/
 
 function onRemove (tabId /*, removeInfo */) {
 	if (marks[tabId]) {
@@ -48,7 +41,6 @@ async function onUpdate (tabId, changeInfo, tabInfo) {
 		}
 
 		//console.debug(`tab: ${tabId} - url changed from ${marks[tabId]} to ${tabUrl}`);
-
 		const bmark = await browser.bookmarks.search({ url: marks[tabId] + postfix });
 		if(bmark.length > 0) {
 			browser.bookmarks.update(bmark[0].id, { title: "auto: " + tabTitle, url: tabUrl + postfix });
@@ -79,8 +71,6 @@ browser.menus.create({
 	checked: false,
 	onclick: async function(info/*, tab*/) {
 		if(info.bookmarkId ) {
-			//blub = { 'startup-tabs': info.bookmarkId }
-
 			let tmp = await browser.storage.local.get(extname);
 			if (tmp) {
 				tmp = tmp[extname];
@@ -105,8 +95,6 @@ browser.menus.onShown.addListener(async function(info/*, tab*/) {
 	}
 	browser.menus.refresh();
 });
-
-
 
 // add listeners
 browser.browserAction.onClicked.addListener(onClicked);
