@@ -43,7 +43,7 @@ async function onUpdate (tabId, changeInfo, tabInfo) {
 		//console.debug(`tab: ${tabId} - url changed from ${marks[tabId]} to ${tabUrl}`);
 		const bmark = await browser.bookmarks.search({ url: marks[tabId] + postfix });
 		if(bmark.length > 0) {
-			browser.bookmarks.update(bmark[0].id, { title: "auto: " + tabTitle, url: tabUrl + postfix });
+			browser.bookmarks.update(bmark[0].id, { title: "AUB: " + tabTitle, url: tabUrl + postfix });
 			marks[tabId] = tabUrl;
 		}
 	}
@@ -57,7 +57,7 @@ async function onClicked (tab) {
     }catch(e){
         tmp = undefined;
     }
-    browser.bookmarks.create({ parentId: tmp, title: "auto:" + tab.title, url: tab.url + postfix });
+    browser.bookmarks.create({ parentId: tmp, title: "AUB:" + tab.title, url: tab.url + postfix });
     browser.tabs.update(tab.id, { url: tab.url + postfix });
 }
 
