@@ -9,47 +9,64 @@ const filter = {
 }
 
 const postfix = '#trackmark';
-let marks = {};
+let marks = new Map();
 
-function onRemove (tabId /*, removeInfo */) {
-	if (marks[tabId]) {
+function makeId(length) {
+    var result           = '';
+    var characters       = '0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
+function onTabsRemoved (tabId /*, removeInfo */) {
+	if (marks.has(tabId)) {
 		//console.debug(`stopped tracking for tabId: ${tabId}`);
-		delete marks[tabId];
+		delete marks.delete(tabId);
 	}
 }
 
-async function onUpdate (tabId, changeInfo, tabInfo) {
+async function onTabsUpdated (tabId, changeInfo, tabInfo) {
 
 	const tabUrl = tabInfo.url;
 	const tabTitle = tabInfo.title;
 
-	if(tabUrl.endsWith(postfix)){
+	//if(tabUrl.endsWith(postfix)){
+	if( /.*#trackmark[0-9]{8}$/.test(tabUrl) ){
 		//console.debug(`started tracking for tabId: ${tabId}`);
-		marks[tabId] = tabUrl.slice(0, -postfix.length);
+		marks.set(tabId,{
+                        id: tabUrl.split("#trackmark")[1],
+                        url: tabUrl.slice(0, -(postfix.length+8))
+        });
 		return;
 	}
 
-	if( marks[tabId] && marks[tabId] !== tabUrl ){
+	if( marks.has(tabId) && marks.get(tabId).url !== tabUrl ){
 
 		const n_url = new URL(tabUrl);
-		const p_url = new URL(marks[tabId]);
+		const p_url = new URL(marks.get(tabId).url);
 
 		// check if we are on the same origin
 		if( n_url.origin !== p_url.origin ) {
-			onRemove(tabId);
+			onTabsRemoved(tabId);
 			return;
 		}
 
-		//console.debug(`tab: ${tabId} - url changed from ${marks[tabId]} to ${tabUrl}`);
-		const bmark = await browser.bookmarks.search({ url: marks[tabId] + postfix });
+		//console.debug(`tab: ${tabId} - url changed from ${marks.get(tabId).url} to ${tabUrl}`);
+		const bmark = await browser.bookmarks.search({ url: marks.get(tabId).url + "#trackmark" + marks.get(tabId).id });
 		if(bmark.length > 0) {
-			browser.bookmarks.update(bmark[0].id, { title: "AUB: " + tabTitle, url: tabUrl + postfix });
-			marks[tabId] = tabUrl;
+			browser.bookmarks.update(bmark[0].id, { title: "AUB: " + tabTitle, url: tabUrl + "#trackmark" + marks.get(tabId).id });
+			marks.set(tabId, {
+                            url: tabUrl,
+                            id: marks.get(tabId).id
+            });
 		}
 	}
 }
 
-async function onClicked (tab) {
+async function onBrowserActionClicked (tab) {
     let tmp;
     try {
         tmp = await browser.storage.local.get(extname);
@@ -57,10 +74,10 @@ async function onClicked (tab) {
     }catch(e){
         tmp = undefined;
     }
-    browser.bookmarks.create({ parentId: tmp, title: "AUB:" + tab.title, url: tab.url + postfix });
-    browser.tabs.update(tab.id, { url: tab.url + postfix });
+    const murl = tab.url + "#trackmark" + makeId(8);
+    browser.bookmarks.create({ parentId: tmp, title: "AUB:" + tab.title, url: murl });
+    browser.tabs.update(tab.id, { url: murl });
 }
-
 
 browser.menus.create({
 	id: extname,
@@ -96,8 +113,8 @@ browser.menus.onShown.addListener(async function(info/*, tab*/) {
 	browser.menus.refresh();
 });
 
-// add listeners
-browser.browserAction.onClicked.addListener(onClicked);
-browser.tabs.onUpdated.addListener(onUpdate, filter);
-browser.tabs.onRemoved.addListener(onRemove);
+// register listeners
+browser.browserAction.onClicked.addListener(onBrowserActionClicked);
+browser.tabs.onUpdated.addListener(onTabsUpdated, filter);
+browser.tabs.onRemoved.addListener(onTabsRemoved);
 
