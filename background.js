@@ -85,7 +85,7 @@ async function onBrowserActionClicked (tab) {
 
 browser.menus.create({
 	id: extname,
-	title: 'Check to save Auto Updating Bookmarks here',
+	title: 'Save AUB here',
 	type: "radio",
 	contexts: ["bookmark"],
 	visible: false,
