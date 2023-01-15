@@ -1,4 +1,6 @@
 {
+  "author": "igorlogius",
+  "homepage_url": "https://github.com/igorlogius/auto-updating-bookmark",
   "background": {
     "scripts": [
       "background.js"
@@ -7,7 +9,6 @@
   "browser_action": {
     "default_title": "create a auto updating bookmark"
   },
-  "description": "create auto updating bookmarks in the same domain scope",
   "icons": {
     "250": "icon.png"
   },
@@ -19,5 +20,5 @@
     "storage", 
     "menus"
   ],
-  "version": "1.6.5"
+  "version": "1.6.6"
 }
