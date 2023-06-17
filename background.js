@@ -5,7 +5,7 @@ const extname = manifest.name;
 
 const filter = {
   urls: ["<all_urls>"],
-  properties: ["url"],
+  properties: ["status"],
 };
 
 const postfix = "#trackmark";
@@ -33,8 +33,14 @@ function onTabsRemoved(tabId /*, removeInfo */) {
 }
 
 async function onTabsUpdated(tabId, changeInfo, tabInfo) {
+  if (changeInfo.status !== "complete") {
+    return;
+  }
+
   const tabUrl = tabInfo.url;
   const tabTitle = tabInfo.title;
+
+  //console.debug(tabTitle);
 
   //if(tabUrl.endsWith(postfix)){
   if (/.*#trackmark[0-9]+$/.test(tabUrl)) {
