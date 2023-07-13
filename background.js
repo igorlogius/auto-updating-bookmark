@@ -67,10 +67,17 @@ async function onTabsUpdated(tabId, changeInfo, tabInfo) {
       url: marks.get(tabId).url + postfix + marks.get(tabId).id,
     });
     if (bmark.length > 0) {
-      browser.bookmarks.update(bmark[0].id, {
-        title: "AUB: " + tabTitle,
-        url: tabUrl + postfix + marks.get(tabId).id,
-      });
+      if (bmark[0].title.startsWith("AUB:")) {
+        browser.bookmarks.update(bmark[0].id, {
+          title: "AUB: " + tabTitle,
+          url: tabUrl + postfix + marks.get(tabId).id,
+        });
+      } else {
+        browser.bookmarks.update(bmark[0].id, {
+          //title: bmark[0].title
+          url: tabUrl + postfix + marks.get(tabId).id,
+        });
+      }
       marks.set(tabId, {
         url: tabUrl,
         id: marks.get(tabId).id,
