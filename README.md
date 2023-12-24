@@ -6,6 +6,10 @@ to catch up to webcomics and other sites without losing track of where you left
 off, wenn you exit the site. Tested with - https://xkcd.com/1/ and many others
 from - http://www.thewebcomiclist.com/
 
+<b>Short Demo Video:</b>
+
+https://github.com/igorlogius/auto-updating-bookmark/assets/67047467/da54a30d-7841-48cd-ba7d-da512209d6e6
+
 <b>Usage:</b>
 <ol>
   <li>Visit the site you want to track</li>
