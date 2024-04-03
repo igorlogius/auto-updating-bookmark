@@ -1,6 +1,6 @@
 {
   "author": "igorlogius",
-  "homepage_url": "https://github.com/igorlogius/auto-updating-bookmark",
+  "homepage_url": "https://github.com/igorlogius",
   "background": {
     "scripts": ["background.js"]
   },
@@ -11,8 +11,9 @@
   "icons": {
     "250": "icon.png"
   },
+  "description": "Create auto updating bookmarks on navigation in the same domain, for example to read webcomics and continue from where you left off",
   "manifest_version": 2,
   "name": "Auto Updating Bookmark",
   "permissions": ["tabs", "bookmarks", "storage", "menus"],
-  "version": "1.6.9"
+  "version": "1.6.10"
 }
