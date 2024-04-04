@@ -15,7 +15,7 @@ https://github.com/igorlogius/auto-updating-bookmark/assets/67047467/da54a30d-78
   <li>Visit the site you want to track</li>
   <li>Click the toolbar button</li>
   <li>
-    This will create a bookmark, which which wen visited updates on navigation
+    This will create a bookmark, which when visited updates on navigation
   </li>
   <li>
     Closing the tab or navigating to a different origin/domain will stop the
